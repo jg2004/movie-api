@@ -18995,7 +18995,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 const apiKey = "3575f85d";
-const movieUrl = 'http://www.omdbapi.com/';
+const movieUrl = 'https://www.omdbapi.com/';
 exports.apiKey = apiKey;
 exports.movieUrl = movieUrl;
 },{}],"assets\\img\\no-image-icon-15.png":[function(require,module,exports) {
@@ -19167,7 +19167,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '55268' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49632' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
