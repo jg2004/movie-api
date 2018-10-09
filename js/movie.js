@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { apiKey, movieUrl } from './config';
 
-
 const movieImageElement = document.getElementById('movie-poster-img');
 const movieDetailsElement = document.getElementById('movie-details');
 const moviePlotElement = document.getElementById('movie-plot');
@@ -59,6 +58,5 @@ function renderMovieDetails(movieDetails) {
     </div>
 </div>
 `
-
 }
 
