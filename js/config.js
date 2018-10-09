@@ -1,3 +1,3 @@
 const apiKey = "3575f85d";
-const movieUrl = 'http://www.omdbapi.com/';
+const movieUrl = 'https://www.omdbapi.com/';
 export {apiKey,movieUrl}
