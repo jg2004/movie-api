@@ -1,4 +1,4 @@
-import elements from './views/movieDetailsElements';
+import elements from './movieDetailsElements';
 
 const renderMovieDetails = (movieDetails) => {
   let rottenTomatoesRatings;

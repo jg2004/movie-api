@@ -8,7 +8,7 @@ export class Movie {
   }
 
   async  getMovieDetails() {
-    const url = `${movieUrl}?i=${movieId}&apiKey=${apiKey}`;
+    const url = `${movieUrl}?i=${this.movieId}&apiKey=${apiKey}`;
     const res = await axios.get(url);
     this.movieDetails = res.data;
   }
