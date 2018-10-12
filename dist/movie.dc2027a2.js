@@ -103,7 +103,19 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   // Override the current require with this new one
   return newRequire;
-})({"node_modules\\axios\\lib\\helpers\\bind.js":[function(require,module,exports) {
+})({"js\\views\\movieDetailsElements.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const elements = {
+  movieImageElement: document.getElementById('movie-poster-img'),
+  movieDetailsElement: document.getElementById('movie-details'),
+  moviePlotElement: document.getElementById('movie-plot')
+};
+exports.default = elements;
+},{}],"node_modules\\axios\\lib\\helpers\\bind.js":[function(require,module,exports) {
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -18998,76 +19010,61 @@ const apiKey = "3575f85d";
 const movieUrl = 'https://www.omdbapi.com/';
 exports.apiKey = apiKey;
 exports.movieUrl = movieUrl;
-},{}],"js\\movie.js":[function(require,module,exports) {
+},{}],"js\\models\\Movie.js":[function(require,module,exports) {
 'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Movie = undefined;
 
 var _axios = require('axios');
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _config = require('./config');
+var _config = require('../config');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const movieImageElement = document.getElementById('movie-poster-img');
-const movieDetailsElement = document.getElementById('movie-details');
-const moviePlotElement = document.getElementById('movie-plot');
+class Movie {
+
+  constructor(movieId) {
+    this.movieId = movieId;
+  }
+
+  async getMovieDetails() {
+    const url = `${_config.movieUrl}?i=${movieId}&apiKey=${_config.apiKey}`;
+    const res = await _axios2.default.get(url);
+    this.movieDetails = res.data;
+  }
+
+}
+exports.Movie = Movie;
+},{"axios":"node_modules\\axios\\index.js","../config":"js\\config.js"}],"js\\movie.js":[function(require,module,exports) {
+'use strict';
+
+var _movieDetailsElements = require('./views/movieDetailsElements');
+
+var movieDetailsView = _interopRequireWildcard(_movieDetailsElements);
+
+var _Movie = require('./models/Movie');
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 const movieId = location.hash.substring(1);
 
-const getMovie = async movieId => {
-  const url = `${_config.movieUrl}?i=${movieId}&apiKey=${_config.apiKey}`;
+addEventListener('DOMContentLoaded', async () => {
+  const movie = new _Movie.Movie(movieId);
 
   try {
-    const res = await _axios2.default.get(url);
-    return res.data;
+    await movie.getMovieDetails();
+    console.log(movie.movieDetails);
+    movieDetailsView.renderMovieDetails(movie.movieDetails);
   } catch (error) {
-    console.log('error occured getting movie dets', error);
+    console.log('error getting movie details', error);
   }
-};
-
-addEventListener('DOMContentLoaded', async () => {
-  const movieDetails = await getMovie(movieId);
-  console.log(movieDetails);
-  renderMovieDetails(movieDetails);
 });
-
-function renderMovieDetails(movieDetails) {
-  let rottenTomatoesRatings;
-  if (movieDetails.Ratings[1]) {
-    rottenTomatoesRatings = `${movieDetails.Ratings[1].Source}: ${movieDetails.Ratings[1].Value}`;
-  } else {
-    rottenTomatoesRatings = "Rotten Tomatoes: N/A";
-  }
-  movieImageElement.src = movieDetails.Poster;
-  movieDetailsElement.innerHTML = `
-<h2>${movieDetails.Title}</h2>
-<ul class="list-group bg-dark">
-            <li class="list-group-item bg-dark">Year: ${movieDetails.Year}</li>
-            <li class="list-group-item bg-dark">Run Time: ${movieDetails.Runtime}</li>
-            <li class="list-group-item bg-dark">Type: ${movieDetails.Type}</li>
-            <li class="list-group-item bg-dark">Genre: ${movieDetails.Genre}</li>
-            <li class="list-group-item bg-dark">Actors: ${movieDetails.Actors}</li>
-            <li class="list-group-item bg-dark">Rated: ${movieDetails.Rated}</li> 
-            <li class="list-group-item bg-dark">Released: ${movieDetails.Released}</li>     
-            <li class="list-group-item bg-dark">IMDB Rating: ${movieDetails.imdbRating}</li>
-            <li class="list-group-item bg-dark">${rottenTomatoesRatings}</li>
-            <li class="list-group-item bg-dark">Box Office: ${movieDetails.BoxOffice}</li>       
-            <li class="list-group-item bg-dark"><a href="${movieDetails.Website}"></a></li>             
-</ul>
-        `;
-
-  moviePlotElement.innerHTML = `
-  <div class="card bg-dark mt-5">
-  <div class="card-body">
-    <h5 class="card-title">Plot</h5>
-    <p class="card-text">${movieDetails.Plot}.</p>
-    <a href="http://imdb.com/title/${movieDetails.imdbID}" target="_blank" class="btn btn-primary">View IMDB</a>
-    <a href="index.html" class="btn btn-secondary">Go Back To Search</a>
-    </div>
-</div>
-`;
-}
-},{"axios":"node_modules\\axios\\index.js","./config":"js\\config.js"}],"..\\..\\..\\AppData\\Roaming\\npm\\node_modules\\parcel-bundler\\src\\builtins\\hmr-runtime.js":[function(require,module,exports) {
+},{"./views/movieDetailsElements":"js\\views\\movieDetailsElements.js","./models/Movie":"js\\models\\Movie.js"}],"..\\..\\..\\AppData\\Roaming\\npm\\node_modules\\parcel-bundler\\src\\builtins\\hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -19096,7 +19093,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '52090' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '57744' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

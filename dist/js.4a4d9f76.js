@@ -103,7 +103,119 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   // Override the current require with this new one
   return newRequire;
-})({"node_modules\\axios\\lib\\helpers\\bind.js":[function(require,module,exports) {
+})({"js\\views\\movieSearchElements.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+   value: true
+});
+
+const elements = {
+   searchForm: document.getElementById('searchForm'),
+   searchText: document.getElementById('searchText'),
+   movieResults: document.getElementById('movies'),
+   pageButtons: document.getElementById('page-buttons'),
+   prevButton: document.getElementById('prev-button'),
+   nextButton: document.getElementById('next-button'),
+   pageTitle: document.getElementById('page-title'),
+   errorMessage: document.getElementById('error-message')
+};
+
+exports.default = elements;
+},{}],"assets\\img\\no-image-icon-15.png":[function(require,module,exports) {
+module.exports = "/no-image-icon-15.e0c924bf.png";
+},{}],"js\\views\\searchView.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.disablePrevious = exports.disableNext = exports.enablePrevious = exports.enableNext = exports.displayErrorMessage = exports.renderMovies = exports.renderTitle = exports.init = undefined;
+
+var _movieSearchElements = require('./movieSearchElements');
+
+var _movieSearchElements2 = _interopRequireDefault(_movieSearchElements);
+
+var _noImageIcon = require('/assets/img/no-image-icon-15.png');
+
+var _noImageIcon2 = _interopRequireDefault(_noImageIcon);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const init = () => {
+  _movieSearchElements2.default.pageButtons.classList.add('d-none');
+  _movieSearchElements2.default.errorMessage.classList.add('d-none');
+  _movieSearchElements2.default.movieResults.innerHTML = '';
+  _movieSearchElements2.default.prevButton.disabled = true;
+  _movieSearchElements2.default.nextButton.disabled = true;
+};
+
+const disableNext = () => {
+  _movieSearchElements2.default.nextButton.disabled = true;
+};
+const enableNext = () => {
+  _movieSearchElements2.default.nextButton.disabled = false;
+};
+
+const disablePrevious = () => {
+  _movieSearchElements2.default.prevButton.disabled = true;
+};
+
+const enablePrevious = () => {
+  _movieSearchElements2.default.prevButton.disabled = false;
+};
+
+const renderTitle = (currentPage, totalPages) => {
+  _movieSearchElements2.default.pageButtons.classList.remove('d-none');
+  _movieSearchElements2.default.pageTitle.textContent = `Page ${currentPage} of ${totalPages}`;
+};
+
+const renderMovies = movies => {
+
+  let movieUrl;
+  let output = '';
+
+  movies.forEach(movie => {
+
+    movieUrl = movie.Poster === "N/A" ? _noImageIcon2.default : movie.Poster;
+    output += `
+    <div class= "col-md-3"> 
+    <div class=" card bg-custom text-white text-center">
+    <img  class='card-img' src="${movieUrl}">
+    <div class='card-body'>    
+    <h5 class='card-text'>${movie.Title}</h5>
+    <a href='movie.html#${movie.imdbID}' class='btn btn-primary'>Movie Details</a>
+     </div>
+    </div>
+    </div>
+    `;
+  });
+  _movieSearchElements2.default.movieResults.innerHTML = output;
+};
+
+const displayErrorMessage = error => {
+  _movieSearchElements2.default.errorMessage.classList.remove('d-none');
+  _movieSearchElements2.default.errorMessage.textContent = error;
+};
+exports.init = init;
+exports.renderTitle = renderTitle;
+exports.renderMovies = renderMovies;
+exports.displayErrorMessage = displayErrorMessage;
+exports.enableNext = enableNext;
+exports.enablePrevious = enablePrevious;
+exports.disableNext = disableNext;
+exports.disablePrevious = disablePrevious;
+},{"./movieSearchElements":"js\\views\\movieSearchElements.js","/assets/img/no-image-icon-15.png":"assets\\img\\no-image-icon-15.png"}],"js\\config.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const apiKey = "3575f85d";
+const movieUrl = 'https://www.omdbapi.com/';
+exports.apiKey = apiKey;
+exports.movieUrl = movieUrl;
+},{}],"node_modules\\axios\\lib\\helpers\\bind.js":[function(require,module,exports) {
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -18988,157 +19100,146 @@ module.exports.default = axios;
 
 },{"./utils":"node_modules\\axios\\lib\\utils.js","./helpers/bind":"node_modules\\axios\\lib\\helpers\\bind.js","./core/Axios":"node_modules\\axios\\lib\\core\\Axios.js","./defaults":"node_modules\\axios\\lib\\defaults.js","./cancel/Cancel":"node_modules\\axios\\lib\\cancel\\Cancel.js","./cancel/CancelToken":"node_modules\\axios\\lib\\cancel\\CancelToken.js","./cancel/isCancel":"node_modules\\axios\\lib\\cancel\\isCancel.js","./helpers/spread":"node_modules\\axios\\lib\\helpers\\spread.js"}],"node_modules\\axios\\index.js":[function(require,module,exports) {
 module.exports = require('./lib/axios');
-},{"./lib/axios":"node_modules\\axios\\lib\\axios.js"}],"js\\config.js":[function(require,module,exports) {
-"use strict";
+},{"./lib/axios":"node_modules\\axios\\lib\\axios.js"}],"js\\models\\MovieSearch.js":[function(require,module,exports) {
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-const apiKey = "3575f85d";
-const movieUrl = 'https://www.omdbapi.com/';
-exports.apiKey = apiKey;
-exports.movieUrl = movieUrl;
-},{}],"assets\\img\\no-image-icon-15.png":[function(require,module,exports) {
-module.exports = "/no-image-icon-15.e0c924bf.png";
-},{}],"js\\index.js":[function(require,module,exports) {
-'use strict';
+exports.MovieSearch = undefined;
+
+var _config = require('../config');
 
 var _axios = require('axios');
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _config = require('./config');
-
-var _noImageIcon = require('../assets/img/no-image-icon-15.png');
-
-var _noImageIcon2 = _interopRequireDefault(_noImageIcon);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const searchForm = document.getElementById('searchForm');
-const searchText = document.getElementById('searchText');
-const movieResults = document.getElementById('movies');
-const pageButtons = document.getElementById('page-buttons');
-const prevButton = document.getElementById('prev-button');
-const nextButton = document.getElementById('next-button');
-const pageTitle = document.getElementById('page-title');
-const errorMessage = document.getElementById('error-message');
+class MovieSearch {
 
-let currentPage;
-let totalResults;
-let searchTerm;
-let totalPages;
-
-nextButton.addEventListener('click', () => {
-  currentPage++;
-  console.log(currentPage, totalPages);
-  if (currentPage >= totalPages) {
-    nextButton.disabled = true;
+  constructor(searchTerm) {
+    this.searchTerm = searchTerm;
+    this.totalResults = 0;
+    this.totalPages = 1;
+    this.movieArray = [];
   }
-  getMovies();
-  if (currentPage !== 1) {
-    prevButton.disabled = false;
-  }
-});
 
-prevButton.addEventListener('click', () => {
-  currentPage--;
-  if (currentPage <= 1) {
-    prevButton.disabled = true;
-  }
-  getMovies();
-});
-
-searchForm.addEventListener('submit', e => {
-  e.preventDefault();
-  init();
-  searchTerm = searchText.value.trim();
-  if (searchTerm) {
-    getMovies();
-  } else {
-    searchText.value = '';
-  }
-});
-
-async function getMovies() {
-  const url = `${_config.movieUrl}?s=${searchTerm}&page=${currentPage}&apiKey=${_config.apiKey}`;
-  try {
+  async getMovies(currentPage) {
+    const url = `${_config.movieUrl}?s=${this.searchTerm}&page=${currentPage}&apiKey=${_config.apiKey}`;
     const res = await _axios2.default.get(url);
     if (res.data.Response === "False") {
       //display error message
       throw new Error(res.data.Error);
     }
-    const movieArray = res.data.Search;
-    totalResults = res.data.totalResults;
-    totalPages = totalResults / 10;
+    this.movieArray = res.data.Search;
+    this.totalResults = res.data.totalResults;
+    this.totalPages = this.totalResults / 10;
     console.log(res);
-    let fractPages = totalPages - Math.trunc(totalPages);
+    let fractPages = this.totalPages - Math.trunc(this.totalPages);
     if (fractPages > 0) {
-      totalPages++;
-      totalPages = Math.trunc(totalPages);
+      this.totalPages++;
+      this.totalPages = Math.trunc(this.totalPages);
     }
-    if (totalPages > 1 && currentPage !== totalPages) {
-      nextButton.disabled = false;
-    }
-    renderTitle();
-    renderMovies(movieArray);
-  } catch (error) {
-    console.log('error fetching movie', error);
-    displayErrorMessage(error);
-    return;
+  }
+
+  init() {
+    this.totalPages = 0;
+    this.totalResults = 0;
   }
 }
+exports.MovieSearch = MovieSearch;
+},{"../config":"js\\config.js","axios":"node_modules\\axios\\index.js"}],"js\\index.js":[function(require,module,exports) {
+'use strict';
 
-function displayErrorMessage(error) {
+var _movieSearchElements = require('./views/movieSearchElements');
+
+var _movieSearchElements2 = _interopRequireDefault(_movieSearchElements);
+
+var _searchView = require('./views/searchView');
+
+var searchView = _interopRequireWildcard(_searchView);
+
+var _MovieSearch = require('./models/MovieSearch');
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+let currentPage;
+let state = {};
+
+_movieSearchElements2.default.nextButton.addEventListener('click', async () => {
+
+  currentPage++;
+  searchView.enablePrevious();
+  if (currentPage >= state.movieSearch.totalPages) {
+    searchView.disableNext();
+  }
+  try {
+    await state.movieSearch.getMovies(currentPage);
+    renderMovies();
+  } catch (error) {
+    init();
+    searchView.displayErrorMessage(error);
+    console.log('error fetching movie', error);
+  }
+});
+
+_movieSearchElements2.default.prevButton.addEventListener('click', async () => {
+  currentPage--;
+  searchView.enableNext();
+  if (currentPage <= 1) {
+    searchView.disablePrevious();
+  }
+  try {
+    await state.movieSearch.getMovies(currentPage);
+    renderMovies();
+  } catch (error) {
+    init();
+    searchView.displayErrorMessage(error);
+    console.log('error fetching movie', error);
+  }
+});
+
+_movieSearchElements2.default.searchForm.addEventListener('submit', async e => {
+  e.preventDefault();
   init();
-  errorMessage.classList.remove('d-none');
-  errorMessage.textContent = error;
-}
-
-function renderTitle() {
-  pageButtons.classList.remove('d-none');
-  pageTitle.textContent = `Page ${currentPage} of ${totalPages}`;
-}
-
-function renderMovies(movies) {
-
-  let movieUrl;
-  let output = '';
-
-  movies.forEach(movie => {
-
-    movieUrl = movie.Poster === "N/A" ? _noImageIcon2.default : movie.Poster;
-    output += `
-    <div class= "col-md-3"> 
-    <div class=" card bg-custom text-white text-center">
-    <img  class='card-img' src="${movieUrl}">
-    <div class='card-body'>    
-    <h5 class='card-text'>${movie.Title}</h5>
-    <a href='movie.html#${movie.imdbID}' class='btn btn-primary'>Movie Details</a>
-     </div>
-    </div>
-    </div>
-    `;
-  });
-
-  movieResults.innerHTML = output;
-}
+  const searchTerm = searchText.value.trim();
+  state.movieSearch = new _MovieSearch.MovieSearch(searchTerm);
+  try {
+    if (searchTerm) {
+      await state.movieSearch.getMovies();
+      if (state.movieSearch.totalPages > 1 && currentPage !== state.movieSearch.totalPages) {
+        searchView.enableNext();
+      }
+      searchView.renderTitle(currentPage, state.movieSearch.totalPages);
+      searchView.renderMovies(state.movieSearch.movieArray);
+    } else {
+      searchText.value = '';
+    }
+  } catch (error) {
+    init();
+    searchView.displayErrorMessage(error);
+    console.log('error fetching movie', error);
+  }
+});
 
 window.addEventListener('DOMContentLoaded', e => {
   init();
 });
 
 function init() {
-  pageButtons.classList.add('d-none');
-  errorMessage.classList.add('d-none');
-  movieResults.innerHTML = '';
-  prevButton.disabled = true;
-  nextButton.disabled = true;
   currentPage = 1;
-  totalPages = 0;
-  totalResults = 0;
+  searchView.init();
+  if (state.movieSearch) state.movieSearch.init();
 }
-},{"axios":"node_modules\\axios\\index.js","./config":"js\\config.js","../assets/img/no-image-icon-15.png":"assets\\img\\no-image-icon-15.png"}],"..\\..\\..\\AppData\\Roaming\\npm\\node_modules\\parcel-bundler\\src\\builtins\\hmr-runtime.js":[function(require,module,exports) {
+
+function renderMovies() {
+  searchView.renderMovies(state.movieSearch.movieArray);
+  searchView.renderTitle(currentPage, state.movieSearch.totalPages);
+}
+},{"./views/movieSearchElements":"js\\views\\movieSearchElements.js","./views/searchView":"js\\views\\searchView.js","./models/MovieSearch":"js\\models\\MovieSearch.js"}],"..\\..\\..\\AppData\\Roaming\\npm\\node_modules\\parcel-bundler\\src\\builtins\\hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -19167,7 +19268,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '52090' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '57744' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

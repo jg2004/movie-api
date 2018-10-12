@@ -1,131 +1,78 @@
-import axios from 'axios';
-import { movieUrl, apiKey } from './config'
-import emptyImageUrl from '../assets/img/no-image-icon-15.png';
-
-const searchForm = document.getElementById('searchForm');
-const searchText = document.getElementById('searchText');
-const movieResults = document.getElementById('movies');
-const pageButtons = document.getElementById('page-buttons');
-const prevButton = document.getElementById('prev-button');
-const nextButton = document.getElementById('next-button');
-const pageTitle = document.getElementById('page-title');
-const errorMessage = document.getElementById('error-message');
+import elements from './views/movieSearchElements';
+import * as searchView from './views/searchView';
+import { MovieSearch } from './models/MovieSearch';
 
 let currentPage;
-let totalResults;
-let searchTerm;
-let totalPages;
+let state = {};
 
+elements.nextButton.addEventListener('click', async () => {
 
-nextButton.addEventListener('click', () => {
   currentPage++;
-  console.log(currentPage, totalPages)
-  if (currentPage >= totalPages) {
-    nextButton.disabled = true;
+  searchView.enablePrevious();
+  if (currentPage >= state.movieSearch.totalPages) {
+    searchView.disableNext();
   }
-  getMovies()
-  if (currentPage !== 1) {
-    prevButton.disabled = false;
+  try {
+    await state.movieSearch.getMovies(currentPage);
+    renderMovies();
+  } catch (error) {
+    init()
+    searchView.displayErrorMessage(error);
+    console.log('error fetching movie', error)
   }
 })
 
-prevButton.addEventListener('click', () => {
+elements.prevButton.addEventListener('click', async () => {
   currentPage--;
+  searchView.enableNext();
   if (currentPage <= 1) {
-    prevButton.disabled = true
+    searchView.disablePrevious();
   }
-  getMovies()
+  try {
+    await state.movieSearch.getMovies(currentPage);
+    renderMovies();
+  } catch (error) {
+    init()
+    searchView.displayErrorMessage(error);
+    console.log('error fetching movie', error)
+  }
 })
 
-searchForm.addEventListener('submit', (e) => {
+elements.searchForm.addEventListener('submit', async (e) => {
   e.preventDefault()
   init();
-  searchTerm = searchText.value.trim();
-  if (searchTerm) {
-    getMovies();
-  } else{
-    searchText.value=''
-  }
-})
-
-async function getMovies() {
-  const url = `${movieUrl}?s=${searchTerm}&page=${currentPage}&apiKey=${apiKey}`;
+  const searchTerm = searchText.value.trim();
+  state.movieSearch = new MovieSearch(searchTerm);
   try {
-    const res = await axios.get(url);
-    if (res.data.Response === "False") {
-      //display error message
-      throw new Error(res.data.Error)
+    if (searchTerm) {
+      await state.movieSearch.getMovies();
+      if (state.movieSearch.totalPages > 1 && currentPage !== state.movieSearch.totalPages) {
+        searchView.enableNext()
+      }
+      searchView.renderTitle(currentPage, state.movieSearch.totalPages);
+      searchView.renderMovies(state.movieSearch.movieArray);
+    } else {
+      searchText.value = ''
     }
-    const movieArray = res.data.Search;
-    totalResults = res.data.totalResults;
-    totalPages = totalResults / 10;
-    console.log(res)
-    let fractPages = totalPages - Math.trunc(totalPages);
-    if (fractPages > 0) {
-      totalPages++;
-      totalPages = Math.trunc(totalPages);
-    }
-    if (totalPages > 1 && currentPage !== totalPages) {
-      nextButton.disabled = false;
-    }
-    renderTitle();
-    renderMovies(movieArray);
 
   } catch (error) {
+    init()
+    searchView.displayErrorMessage(error);
     console.log('error fetching movie', error)
-    displayErrorMessage(error);
-    return
   }
-}
-
-function displayErrorMessage(error) {
-  init();
-  errorMessage.classList.remove('d-none');
-  errorMessage.textContent = error;
-}
-
-function renderTitle() {
-  pageButtons.classList.remove('d-none');
-  pageTitle.textContent = `Page ${currentPage} of ${totalPages}`
-}
-
-
-function renderMovies(movies) {
-
-  let movieUrl;
-  let output = '';
-
-  movies.forEach((movie) => {
-
-    movieUrl = movie.Poster === "N/A" ? emptyImageUrl : movie.Poster
-    output +=
-      `
-    <div class= "col-md-3"> 
-    <div class=" card bg-custom text-white text-center">
-    <img  class='card-img' src="${movieUrl}">
-    <div class='card-body'>    
-    <h5 class='card-text'>${movie.Title}</h5>
-    <a href='movie.html#${movie.imdbID}' class='btn btn-primary'>Movie Details</a>
-     </div>
-    </div>
-    </div>
-    `
-  });
-
-  movieResults.innerHTML = output;
-}
+})
 
 window.addEventListener('DOMContentLoaded', (e) => {
   init()
 })
 
 function init() {
-  pageButtons.classList.add('d-none');
-  errorMessage.classList.add('d-none');
-  movieResults.innerHTML = '';
-  prevButton.disabled = true;
-  nextButton.disabled = true;
   currentPage = 1;
-  totalPages = 0;
-  totalResults = 0;
+  searchView.init();
+  if (state.movieSearch) state.movieSearch.init();
+}
+
+function renderMovies() {
+  searchView.renderMovies(state.movieSearch.movieArray)
+  searchView.renderTitle(currentPage, state.movieSearch.totalPages);
 }
